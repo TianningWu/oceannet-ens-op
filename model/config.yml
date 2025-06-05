@@ -1,0 +1,47 @@
+batchsize: 250
+channels:
+- SSU
+- SSV
+- SSH
+- SSKE
+epochs: 100
+epochs_ran: 100
+landseamask: true
+learning_rate: 0.0005
+lossargs:
+  channels:
+  - - SSU
+    - 0
+    - 0.2
+  - - SSV
+    - 1
+    - 0.2
+  - - SSH
+    - 2
+    - 0.4
+  - - SSKE
+    - 3
+    - 0.2
+  lambda_fft: 0.2
+lossfunction: spectral_abs2
+nn_arch: FNO2D_grid_pad2
+nn_name: null
+nn_params:
+  fourier_layers: 6
+  modes1: 80
+  modes2: 80
+  padding: 4
+  padval: 0.0
+  pbias: true
+  width: 20
+num_channels: 4
+optimizer: AdamW
+outdir: ../outputs/fc_ds2/fcds_whole_diagnostic_spectralAbs2_9
+stepping: one
+stepscheme: directstep
+testbeg: 9400
+testend: 10000
+trainbeg: 0
+trainend: 9130
+training: glorys_glorys
+weight_decay: 0.0001
