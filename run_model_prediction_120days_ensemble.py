@@ -114,7 +114,7 @@ for teststart in np.arange(0,40): # forecast initial date
     nc_lat.units = 'degree_north'
     nc_lon.axis = "X"
     nc_lat.axis = "Y"
-    nc_chn.description='1:SSU, 2:SSV, 3:SSH, 4:Surface current speed'
+    nc_chn.description='1:SSU, 2:SSV, 3:SSH, 4:SSKE'
     nc_field.coordinates="lon lat ocean_time channel"
     # data
     nc_chn[:] = np.asarray([1,2,3,4])
