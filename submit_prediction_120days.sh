@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH -p ai2es,sooner_gpu_test,sooner_gpu_test_h100
+#SBATCH -p sooner_gpu_test,sooner_gpu_test_h100,ai2es
 #SBATCH --container=el9hw
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
