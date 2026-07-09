@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH -p ai2es,sooner_gpu_test
+#SBATCH -p ai2es,sooner_gpu_test,sooner_gpu_test_h100
 #SBATCH --container=el9hw
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -9,6 +9,7 @@
 #SBATCH --job-name="FNO_CP"
 #SBATCH --output=./logs/log_%x.out
 #SBATCH --error=./logs/log_%x.err
+#SBATCH --mem=4G
 
 #  source my python env
 module purge
