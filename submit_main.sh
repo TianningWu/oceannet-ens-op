@@ -1,5 +1,6 @@
 #!/bin/bash -l
-#SBATCH --partition=ai2es      # Using normal partition
+#SBATCH --partition=all      # Using normal partition
+#SBATCH --container=el9hw
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=500M

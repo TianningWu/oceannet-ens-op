@@ -1,8 +1,9 @@
 #!/bin/bash -l
-#SBATCH -p ai2es
+#SBATCH -p all
+#SBATCH --container=el9hw
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --time=12:00:00
+#SBATCH --time=1:00:00
 #SBATCH --chdir=./
 #SBATCH --job-name="MKGIF"
 #SBATCH --output=./logs/log_%x.out
