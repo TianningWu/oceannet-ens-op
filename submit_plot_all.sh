@@ -2,7 +2,7 @@
 #SBATCH --partition=all      # Using normal partition
 #SBATCH --container=el9hw
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=41
+#SBATCH --cpus-per-task=40
 #SBATCH --mem=64G
 #SBATCH --job-name=PLOTALL
 #SBATCH --output=./logs/log_%x.out
