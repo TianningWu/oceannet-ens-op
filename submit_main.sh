@@ -7,7 +7,7 @@
 #SBATCH --job-name=MAIN
 #SBATCH --output=/ourdisk/hpc/ai2es/twu27/oceannet2/ens_pred_op/logs/log_%x.out
 #SBATCH --error=/ourdisk/hpc/ai2es/twu27/oceannet2/ens_pred_op/logs/log_%x.err
-#SBATCH --time=6:00:00      # 2 days (maximum time limit for normal partition)
+#SBATCH --time=20:00:00      # 2 days (maximum time limit for normal partition)
 
 hostname
 start_time=`date +%s`
