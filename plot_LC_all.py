@@ -395,9 +395,7 @@ if __name__ == '__main__':
         num_processes = min(cpu_count(), len(fc_dates))  # Use number of available cores or number of frames, whichever is smaller
         # Create a pool of workers and process frames in parallel
         with Pool(processes=num_processes) as ipool:
-            ipool.map(plotframe, args[0:61])
-        with Pool(processes=num_processes) as ipool:
-            ipool.map(plotframe, args[61:121])
+            ipool.map(plotframe, args)
     # make video from the figures
     init_timestr = np.datetime_as_string(fc_dates[0],unit='D').replace('-', '')
     if (animfmt=='mp4'):

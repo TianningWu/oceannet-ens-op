@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --partition=all      # Using normal partition
 #SBATCH --container=el9hw
-#SBATCH --ntasks=5
-#SBATCH --cpus-per-task=8
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=41
 #SBATCH --mem=64G
 #SBATCH --job-name=NC4VIS
 #SBATCH --output=./logs/log_%x.out
