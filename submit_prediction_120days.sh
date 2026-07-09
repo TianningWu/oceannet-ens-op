@@ -1,5 +1,6 @@
 #!/bin/bash -l
-#SBATCH -p ai2es
+#SBATCH -p ai2es,sooner_gpu_test
+#SBATCH --container=el9hw
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --time=12:00:00

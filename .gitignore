@@ -6,3 +6,4 @@
 *.err
 *.out
 *.pt
+__pycache__/
