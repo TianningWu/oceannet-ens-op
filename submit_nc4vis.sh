@@ -3,7 +3,7 @@
 #SBATCH --container=el9hw
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=20
-#SBATCH --mem=64G
+#SBATCH --mem=12G
 #SBATCH --job-name=NC4VIS
 #SBATCH --output=./logs/log_%x.out
 #SBATCH --error=./logs/log_%x.err
