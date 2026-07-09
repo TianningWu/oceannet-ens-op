@@ -8,6 +8,7 @@
 #SBATCH --job-name="MKGIF"
 #SBATCH --output=./logs/log_%x.out
 #SBATCH --error=./logs/log_%x.err
+#SBATCH --mem=1G
 
 #  source my python env
 module purge
