@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -p all
+#SBATCH -p ai2es,all
 #SBATCH --container=el9hw
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1

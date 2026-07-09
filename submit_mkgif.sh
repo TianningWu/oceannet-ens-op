@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH -p all
+#SBATCH -p ai2es,all
 #SBATCH --container=el9hw
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
