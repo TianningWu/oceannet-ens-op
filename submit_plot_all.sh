@@ -7,7 +7,7 @@
 #SBATCH --job-name=PLOTALL
 #SBATCH --output=./logs/log_%x.out
 #SBATCH --error=./logs/log_%x.err
-#SBATCH --time=12:00:00      # 2 days (maximum time limit for normal partition)
+#SBATCH --time=1:00:00      # 2 days (maximum time limit for normal partition)
 
 #  source my python env
 module purge
