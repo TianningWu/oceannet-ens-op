@@ -9,6 +9,16 @@ import xarray as xr
 import glob
 from data_loaders_mercator import load_predict_grid_mask
 from multiprocessing import Pool, cpu_count
+from matplotlib import font_manager
+
+PREFERRED_FONT = 'Open Sans'
+FALLBACK_FONT = 'DejaVu Sans'
+
+
+def set_default_font(size):
+    available_fonts = {font.name for font in font_manager.fontManager.ttflist}
+    font_name = PREFERRED_FONT if PREFERRED_FONT in available_fonts else FALLBACK_FONT
+    plt.rc('font', family='sans-serif', **{'sans-serif': [font_name], 'size': size})
 
 def plt_coast_depth(ax,domainbnd):
     # load depth from high res dataset
@@ -29,10 +39,7 @@ def plt_coast_depth(ax,domainbnd):
 
 def plot_ensmem(args,datain):
     # Set up the default font
-    font = {'family' : 'sans-serif',
-            'sans-serif' : 'Open Sans',
-            'size' : 12}
-    plt.rc('font', **font)
+    set_default_font(12)
     # plot each ensemble members speed and ssh
     # read data and parameters
     iday, ds, lon2d, lat2d, fc_dates = args
@@ -114,10 +121,7 @@ def plot_ensmem(args,datain):
 
 def plot_ensmean(args,datain):
     # Set up the default font
-    font = {'family' : 'sans-serif',
-            'sans-serif' : 'Open Sans',
-            'size' : 24}
-    plt.rc('font', **font)
+    set_default_font(24)
     # plot ensemble mean and spread, speed and ssh
     # read data and parameters
     iday, ds, lon2d, lat2d, fc_dates = args
@@ -228,10 +232,7 @@ def plot_ensmean(args,datain):
 
 def plot_features(args,datain):
     # Set up the default font
-    font = {'family' : 'sans-serif',
-            'sans-serif' : 'Open Sans',
-            'size' : 24}
-    plt.rc('font', **font)
+    set_default_font(24)
     # plot ensemble LC and Eddy features
     # read data and parameters
     iday, ds, lon2d, lat2d, fc_dates = args
@@ -387,12 +388,12 @@ if __name__ == '__main__':
     log_parallel=1 # logic swith to turn on/off parallel plot (0=sequential, 1=parallel)
     animfmt='mp4' #'gif' or 'mp4'
     # Prepare arguments for parallel processing
-    args = [(iday, ds, lon2d, lat2d, fc_dates) for iday in range(len(fc_dates)+1)]
+    args = [(iday, ds, lon2d, lat2d, fc_dates) for iday in range(len(fc_dates))]
     if (log_parallel == 0):
         for iarg in args:
             plotframe(iarg)
     elif (log_parallel == 1):
-        num_processes = min(cpu_count(), len(fc_dates))  # Use number of available cores or number of frames, whichever is smaller
+        num_processes = min(cpu_count(), len(args))  # Use number of available cores or number of frames, whichever is smaller
         # Create a pool of workers and process frames in parallel
         with Pool(processes=num_processes) as ipool:
             ipool.map(plotframe, args)
