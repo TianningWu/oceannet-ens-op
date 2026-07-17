@@ -20,6 +20,48 @@ def set_default_font(size):
     font_name = PREFERRED_FONT if PREFERRED_FONT in available_fonts else FALLBACK_FONT
     plt.rc('font', family='sans-serif', **{'sans-serif': [font_name], 'size': size})
 
+
+def make_mp4_from_pngs(image_template, output_file, frame_indices, fps=2):
+    image_paths = [image_template.format(iday=iday) for iday in frame_indices]
+    if not image_paths:
+        raise ValueError('No frames were requested for MP4 creation.')
+
+    frame_sizes = []
+    for image_path in image_paths:
+        frame = cv2.imread(image_path, cv2.IMREAD_COLOR)
+        if frame is None:
+            raise FileNotFoundError(f'Could not read frame: {image_path}')
+        frame_sizes.append(frame.shape[:2])
+
+    out_h = max(height for height, _ in frame_sizes)
+    out_w = max(width for _, width in frame_sizes)
+    out_h += out_h % 2
+    out_w += out_w % 2
+
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    writer = cv2.VideoWriter(
+        output_file,
+        cv2.VideoWriter_fourcc(*'mp4v'),
+        fps,
+        (out_w, out_h),
+    )
+    if not writer.isOpened():
+        raise RuntimeError(f'Could not open MP4 writer for: {output_file}')
+
+    try:
+        for image_path in image_paths:
+            frame = cv2.imread(image_path, cv2.IMREAD_COLOR)
+            height, width = frame.shape[:2]
+            canvas = np.full((out_h, out_w, 3), 255, dtype=frame.dtype)
+            top = (out_h - height) // 2
+            left = (out_w - width) // 2
+            canvas[top:top + height, left:left + width] = frame
+            writer.write(canvas)
+    finally:
+        writer.release()
+
+    print(f'Wrote {output_file} ({len(image_paths)} frames, {out_w}x{out_h}, {fps} fps)')
+
 def plt_coast_depth(ax,domainbnd):
     # load depth from high res dataset
     global lon2dhr_true, lat2dhr_true, hrh
@@ -386,7 +428,7 @@ if __name__ == '__main__':
     lat2d, lon2d = np.meshgrid(lats,lons)
 
     log_parallel=1 # logic swith to turn on/off parallel plot (0=sequential, 1=parallel)
-    animfmt='mp4' #'gif' or 'mp4'
+    animfmt='mp4'
     # Prepare arguments for parallel processing
     args = [(iday, ds, lon2d, lat2d, fc_dates) for iday in range(len(fc_dates))]
     if (log_parallel == 0):
@@ -400,25 +442,27 @@ if __name__ == '__main__':
     # make video from the figures
     init_timestr = np.datetime_as_string(fc_dates[0],unit='D').replace('-', '')
     if (animfmt=='mp4'):
-        figpath = './figs_ensmembers/'
-        outpath = './archives/ens_mem/'
-        os.system(f'module load FFmpeg/5.1.2-GCCcore-12.2.0; ffmpeg -framerate 2 -y -i {figpath}/ssh_members_fconly_%d.png -c:v libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p {outpath}/oceannet_sshmembers_{init_timestr}.mp4')
-        os.system(f'module load FFmpeg/5.1.2-GCCcore-12.2.0; ffmpeg -framerate 2 -y -i {figpath}/spd_members_fconly_%d.png -c:v libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p {outpath}/oceannet_spdmembers_{init_timestr}.mp4')
-        figpath = './figs_features/'
-        outpath = './archives/ens_features/'
-        os.system(f'module load FFmpeg/5.1.2-GCCcore-12.2.0; ffmpeg -framerate 2 -y -i {figpath}/ssh_feat_fconly_%d.png -c:v libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p {outpath}/oceannet_ensfeatures_{init_timestr}.mp4')
-        figpath = './figs_ensmean/'
-        outpath = './archives/ens_mean/'
-        os.system(f'module load FFmpeg/5.1.2-GCCcore-12.2.0; ffmpeg -framerate 2 -y -i {figpath}/ssh_meanstd_fconly_%d.png -c:v libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p {outpath}/oceannet_ensmean_{init_timestr}.mp4')
-    elif (animfmt=='gif'):
-        figpath = './figs_ensmembers/'
-        outpath = './archives/ens_mem/'
-        os.system(f'module load FFmpeg/5.1.2-GCCcore-12.2.0; ffmpeg -framerate 2 -y -i {figpath}/ssh_members_fconly_%d.png -filter_complex "scale=2048:-1:flags=lanczos,pad=iw:ih:(ow-iw)/2:(oh-ih)/2:color=white,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" {outpath}/oceannet_sshmembers_{init_timestr}.gif')
-        os.system(f'module load FFmpeg/5.1.2-GCCcore-12.2.0; ffmpeg -framerate 2 -y -i {figpath}/spd_members_fconly_%d.png -filter_complex "scale=2048:-1:flags=lanczos,pad=iw:ih:(ow-iw)/2:(oh-ih)/2:color=white,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" {outpath}/oceannet_spdmembers_{init_timestr}.gif')
-        figpath = './figs_features/'
-        outpath = './archives/ens_features/'
-        os.system(f'module load FFmpeg/5.1.2-GCCcore-12.2.0; ffmpeg -framerate 2 -y -i {figpath}/ssh_feat_fconly_%d.png -filter_complex "scale=2048:-1:flags=lanczos,pad=iw:ih:(ow-iw)/2:(oh-ih)/2:color=white,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" {outpath}/oceannet_ensfeatures_{init_timestr}.gif')
-        figpath = './figs_ensmean/'
-        outpath = './archives/ens_mean/'
-        os.system(f'module load FFmpeg/5.1.2-GCCcore-12.2.0; ffmpeg -framerate 2 -y -i {figpath}/ssh_meanstd_fconly_%d.png -filter_complex "scale=2048:-1:flags=lanczos,pad=iw:ih:(ow-iw)/2:(oh-ih)/2:color=white,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" {outpath}/oceannet_ensmean_{init_timestr}.gif')
+        frame_indices = range(len(fc_dates))
+        make_mp4_from_pngs(
+            './figs_ensmembers/ssh_members_fconly_{iday}.png',
+            f'./archives/ens_mem/oceannet_sshmembers_{init_timestr}.mp4',
+            frame_indices,
+        )
+        make_mp4_from_pngs(
+            './figs_ensmembers/spd_members_fconly_{iday}.png',
+            f'./archives/ens_mem/oceannet_spdmembers_{init_timestr}.mp4',
+            frame_indices,
+        )
+        make_mp4_from_pngs(
+            './figs_features/ssh_feat_fconly_{iday}.png',
+            f'./archives/ens_features/oceannet_ensfeatures_{init_timestr}.mp4',
+            frame_indices,
+        )
+        make_mp4_from_pngs(
+            './figs_ensmean/ssh_meanstd_fconly_{iday}.png',
+            f'./archives/ens_mean/oceannet_ensmean_{init_timestr}.mp4',
+            frame_indices,
+        )
+    else:
+        raise ValueError(f'Unsupported animation format: {animfmt}. Only mp4 is supported.')
     ds.close()
