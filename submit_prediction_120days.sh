@@ -13,7 +13,6 @@
 
 #  source my python env
 module purge
-source /home/twu27/.bashrc
 source /home/twu27/python3/env/oceannet/bin/activate
 module load Python/3.10.8-GCCcore-12.2.0
 module load CUDA/11.8.0
